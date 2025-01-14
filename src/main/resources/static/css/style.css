@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: #2c3e50;
+  font-family: 'Noto Serif', serif;
+  padding: 50px;
+}
+
+header {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e9e9e9;
+  padding: 0 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.header-title-input {
+  flex-grow: 1; /* 中央に広げる */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-input {
+  width: 300px;
+  padding: 5px;
+  font-family: 'Noto Serif', serif;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.header-title-input button {
+  font-family: 'Noto Emoji', sans-serif;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.title-link {
+  margin-left: 50px;
+}
+
+.title-link a,
+.create-link a,
+.header-create button,
+.header-update button {
+  font-family: 'Noto Emoji', sans-serif; /* Noto Emoji を適用 */
+  font-size: 24px; /* 絵文字のサイズを統一 */
+  color: #333333; /* テキスト色 */
+  text-decoration: none; /* 下線を削除 */
+  border: none; /* 枠線を削除 */
+  background: none; /* 背景色を削除 */
+  cursor: pointer; /* ポインタを変更 */
+  margin-right: 50px;
+}
+
+.title-link a:hover,
+.create-link a:hover,
+.header-create button:hover,
+.header-update button:hover {
+  color: #000000; /* ホバー時の色 */
+  background-color: #f0f0f0; /* ホバー時の背景色 */
+  border-radius: 5px; /* ホバー時の丸み */
+}
+
+input, textarea {
+  font-family: 'Noto Serif', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+  border: none;
+  outline: none;
+  border-radius: 3px;
+  width: 100%;
+}
+
+textarea {
+  height: 100vh;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.memo-table {
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+.memo-table th, td {
+  height: 45px;
+  padding: 5px;
+  border: 1px solid #2c3e50;
+}
+
+.memo-table th {
+  background-color: #a0a0a0;
+  color: #ffffff;
+}
+
+.memo-table button {
+  font-family: 'Noto Emoji', sans-serif;
+  font-size: 24px;
+  color: #2c3e50;
+  padding: 5px;
+}
+
+.memo-table button:hover {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.form {
+  width: 100%;
+  padding: 30px 20px;
+  margin: 0 auto 50px;
+}
+
+.error {
+  text-align: center;
+}
+
+.memo-table td {
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

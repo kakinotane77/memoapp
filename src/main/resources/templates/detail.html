@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400&display=swap" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+  <title>詳細</title>
+</head>
+<body>
+
+<header>
+  <div class="title-link emoji">
+    <a th:href="@{/}">🏠</a>
+  </div>
+
+  <!-- 更新ボタン -->
+  <div class="header-update">
+    <button type="submit" form="updateForm" class="emoji">🔄</button>
+  </div>
+</header>
+
+<div class="form">
+  <form id="updateForm" th:if="${memo != null}" th:action="@{/memos/{memoId}/update(memoId=${memo.id})}" th:method="post" th:object="${memoForm}">
+    <!-- タイトル入力欄 -->
+    <div class="form_title">
+      <input type="text" id="title" th:field="*{title}" required>
+    </div>
+
+    <!-- 本文入力欄 -->
+    <div class="form_content">
+      <textarea id="content" th:field="*{content}" required></textarea>
+    </div>
+  </form>
+  <div th:if="${memo == null}">
+    <p>メモが見つかりません。</p>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400&display=swap" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+  <title>Memo App</title>
+</head>
+
+<body>
+
+<header>
+  <div class="title-link emoji">
+    <a th:href="@{/}">🏠</a>
+  </div>
+
+  <div class="create-link emoji">
+    <a th:href="@{/memoForm}">🖌︎</a>
+  </div>
+</header>
+
+<table class="memo-table">
+  <form method="post">
+    <tr th:each="memo : ${memoList}">
+      <td th:if="${memo != null}">
+        <a th:text="${#strings.abbreviate(memo.title, 15)}" th:href="@{/memos/{id}(id=${memo.id})}"></a>
+      </td>
+      <td th:if="${memo != null}" th:text="${#strings.abbreviate(memo.content, 20)}"></td>
+      <td th:if="${memo != null}" th:text="${#temporals.format(memo.updatedDate, 'yyyy/M/d [HH]:mm')}"></td>
+      <td th:if="${memo != null}">
+        <button type="submit" th:formaction="@{/memos/{id}/delete(id=${memo.id})}">🗑︎</button>
+      </td>
+    </tr>
+  </form>
+</table>
+
+</body>
+</html>
