@@ -31,10 +31,6 @@ public class MemoController {
     @PostMapping("/memos")
     public String createMemo(@ModelAttribute MemoForm memoForm, Model model) {
         try {
-            if (memoForm.getTitle() == null || memoForm.getTitle().trim().isEmpty()) {
-                model.addAttribute("error", "タイトルを入力してください。");
-                return "memoForm";
-            }
             if (memoForm.getContent() == null || memoForm.getContent().trim().isEmpty()) {
                 model.addAttribute("error", "本文を入力してください。");
                 return "memoForm";
@@ -44,7 +40,7 @@ public class MemoController {
             memoForm.setCreatedDate(now);
             memoForm.setUpdatedDate(now);
 
-            memoRepository.insert(memoForm.getTitle(), memoForm.getContent(), memoForm.getCreatedDate(), memoForm.getUpdatedDate());
+            memoRepository.insert(memoForm.getContent(), memoForm.getCreatedDate(), memoForm.getUpdatedDate());
             return "redirect:/";
         } catch (Exception e) {
             model.addAttribute("error", "メモの作成に失敗しました: " + e.getMessage());
@@ -84,7 +80,6 @@ public class MemoController {
         }
 
         MemoForm memoForm = new MemoForm();
-        memoForm.setTitle(memo.getTitle());
         memoForm.setContent(memo.getContent());
 
         model.addAttribute("memoForm", memoForm);
@@ -107,7 +102,7 @@ public class MemoController {
             LocalDateTime now = LocalDateTime.now();
             memoForm.setUpdatedDate(now);
 
-            memoRepository.update(memoForm.getTitle(), memoForm.getContent(), memoForm.getUpdatedDate(), id);
+            memoRepository.update(memoForm.getContent(), memoForm.getUpdatedDate(), id);
             return "redirect:/";
         } catch (Exception e) {
             model.addAttribute("error", "メモの更新に失敗しました: " + e.getMessage());

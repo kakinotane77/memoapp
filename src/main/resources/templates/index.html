@@ -23,9 +23,8 @@
   <form method="post">
     <tr th:each="memo : ${memoList}">
       <td th:if="${memo != null}">
-        <a th:text="${#strings.abbreviate(memo.title, 15)}" th:href="@{/memos/{id}(id=${memo.id})}"></a>
+        <a th:text="${#strings.abbreviate(memo.content, 30)}" th:href="@{/memos/{id}(id=${memo.id})}"></a>
       </td>
-      <td th:if="${memo != null}" th:text="${#strings.abbreviate(memo.content, 20)}"></td>
       <td th:if="${memo != null}" th:text="${#temporals.format(memo.updatedDate, 'yyyy/M/d [HH]:mm')}"></td>
       <td th:if="${memo != null}">
         <button type="submit" th:formaction="@{/memos/{id}/delete(id=${memo.id})}">🗑︎</button>

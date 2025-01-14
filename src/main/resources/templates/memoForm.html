@@ -21,10 +21,6 @@
 
 <div class="form">
     <form id="memoForm" th:action="@{/memos}" th:method="post" th:object="${memoForm}">
-        <!-- タイトル入力欄 -->
-        <div class="form_title">
-            <input type="text" placeholder="タイトルを入力" id="title" th:field="*{title}" required>
-        </div>
 
         <!-- 本文入力欄 -->
         <div class="form_content">

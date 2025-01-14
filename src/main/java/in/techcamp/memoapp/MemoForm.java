@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class MemoForm {
-    private String title;
     private String content;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
