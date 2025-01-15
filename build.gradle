@@ -46,6 +46,10 @@ dependencies {
 
 	// JUnit Platform Launcher (テスト実行に必要)
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.0'
+
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-crypto'
 }
 
 tasks.named('test') {
