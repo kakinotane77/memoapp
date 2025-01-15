@@ -10,10 +10,12 @@ public class MemoForm {
     private String content;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+    private String displayMode; // 縦書き・横書きの表示モード
 
-    // コンストラクタでデフォルト値を設定
+    // デフォルトコンストラクタで初期値を設定
     public MemoForm() {
         this.createdDate = LocalDateTime.now();
         this.updatedDate = LocalDateTime.now();
+        this.displayMode = "horizontal"; // 初期値を横書きに設定
     }
 }

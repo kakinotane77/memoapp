@@ -17,17 +17,14 @@ public class MemoController {
 
     private final MemoRepository memoRepository;
 
-    /**
-     * メモフォームの表示
-     */
     @GetMapping("/memoForm")
     public String showMemoForm(@ModelAttribute("memoForm") MemoForm form) {
+        if (form.getDisplayMode() == null) {
+            form.setDisplayMode("horizontal"); // デフォルト値を設定
+        }
         return "memoForm";
     }
 
-    /**
-     * メモの作成
-     */
     @PostMapping("/memos")
     public String createMemo(@ModelAttribute MemoForm memoForm, Model model) {
         try {
@@ -40,36 +37,40 @@ public class MemoController {
             memoForm.setCreatedDate(now);
             memoForm.setUpdatedDate(now);
 
-            memoRepository.insert(memoForm.getContent(), memoForm.getCreatedDate(), memoForm.getUpdatedDate());
+            memoRepository.insert(
+                    memoForm.getContent(),
+                    memoForm.getCreatedDate(),
+                    memoForm.getUpdatedDate(),
+                    memoForm.getDisplayMode() != null ? memoForm.getDisplayMode() : "horizontal" // 表示モードを保存
+            );
             return "redirect:/";
         } catch (Exception e) {
             model.addAttribute("error", "メモの作成に失敗しました: " + e.getMessage());
+            model.addAttribute("memoForm", memoForm);
             return "memoForm";
         }
     }
 
-    /**
-     * メモ一覧の表示
-     */
     @GetMapping("/")
     public String showMemos(Model model) {
-        try {
-            var memoList = memoRepository.findAll();
-            if (memoList == null || memoList.isEmpty()) {
-                model.addAttribute("memoList", List.of()); // 空リストを渡す
-            } else {
-                model.addAttribute("memoList", memoList);
+        List<MemoEntity> memoList = memoRepository.findAll();
+
+        // ここでデバッグ表示
+        System.out.println("=== showMemos() ===");
+        if (memoList != null) {
+            for (MemoEntity memo : memoList) {
+                System.out.println("id=" + memo.getId()
+                        + ", content=" + memo.getContent()
+                        + ", updatedDate=" + memo.getUpdatedDate());
             }
-        } catch (Exception e) {
-            model.addAttribute("error", "メモの取得に失敗しました: " + e.getMessage());
-            model.addAttribute("memoList", List.of()); // エラー時も空リストを渡す
+        } else {
+            System.out.println("memoList is null!");
         }
+
+        model.addAttribute("memoList", memoList);
         return "index";
     }
 
-    /**
-     * メモ詳細の表示
-     */
     @GetMapping("/memos/{id}")
     public String memoDetail(@PathVariable long id, Model model) {
         MemoEntity memo = memoRepository.findById(id);
@@ -81,15 +82,13 @@ public class MemoController {
 
         MemoForm memoForm = new MemoForm();
         memoForm.setContent(memo.getContent());
+        memoForm.setDisplayMode(memo.getDisplayMode() != null ? memo.getDisplayMode() : "horizontal"); // 表示モードをセット
 
         model.addAttribute("memoForm", memoForm);
         model.addAttribute("memo", memo);
         return "detail";
     }
 
-    /**
-     * メモの更新
-     */
     @PostMapping("/memos/{id}/update")
     public String updateMemo(@PathVariable long id, @ModelAttribute MemoForm memoForm, Model model) {
         try {
@@ -102,17 +101,20 @@ public class MemoController {
             LocalDateTime now = LocalDateTime.now();
             memoForm.setUpdatedDate(now);
 
-            memoRepository.update(memoForm.getContent(), memoForm.getUpdatedDate(), id);
+            memoRepository.update(
+                    memoForm.getContent(),
+                    memoForm.getUpdatedDate(),
+                    memoForm.getDisplayMode() != null ? memoForm.getDisplayMode() : "horizontal",
+                    id
+            );
             return "redirect:/";
         } catch (Exception e) {
             model.addAttribute("error", "メモの更新に失敗しました: " + e.getMessage());
+            model.addAttribute("memoForm", memoForm);
             return "detail";
         }
     }
 
-    /**
-     * メモの削除
-     */
     @PostMapping("/memos/{id}/delete")
     public String deleteMemo(@PathVariable long id, Model model) {
         try {

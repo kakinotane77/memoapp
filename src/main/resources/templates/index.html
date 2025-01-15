@@ -1,40 +1,197 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
   <meta charset="UTF-8">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400&display=swap" rel="stylesheet">
   <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
   <title>Memo App</title>
+  <style>
+    .memo-table {
+      width: 80vw;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+    .memo-table th,
+    .memo-table td {
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+    }
+    .memo-table .content-column {
+      width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left;
+    }
+    .memo-table .update-date {
+      text-align: center;
+      width: 150px;
+    }
+    .memo-table .delete-button {
+      text-align: right;
+      width: 50px;
+      padding-left: 10px;
+    }
+    .memo-table button {
+      font-family: 'Noto Emoji', sans-serif;
+      font-size: 20px;
+      color: #333;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .memo-table button:hover {
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+    }
+
+        /* -- モーダルスタイル -- */
+    .modal {
+      display: none;       /* 初期状態では非表示 */
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      font-size: 18px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-  <div class="title-link emoji">
-    <a th:href="@{/}">🏠</a>
-  </div>
-
+  <!-- 新規作成フォームへのリンクボタン -->
   <div class="create-link emoji">
     <a th:href="@{/memoForm}">🖌︎</a>
   </div>
 </header>
 
-<table class="memo-table">
-  <tbody>
-  <tr th:each="memo : ${memoList}">
-    <td th:if="${memo != null}">
-      <a th:text="${#strings.abbreviate(memo.content, 30)}" th:href="@{/memos/{id}(id=${memo.id})}"></a>
-    </td>
-    <td th:if="${memo != null}" th:text="${#temporals.format(memo.updatedDate, 'yyyy/M/d 　[HH]:mm')}"></td>
-    <td th:if="${memo != null}">
-      <!-- 削除ボタン用の独立したフォーム -->
-      <form th:action="@{/memos/{id}/delete(id=${memo.id})}" method="post">
-        <button type="submit">🗑︎</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<div class="memo-list">
+  <table class="memo-table">
+    <tbody>
+    <!-- memoList に含まれる各 MemoEntity を表示 -->
+    <tr th:each="memo : ${memoList}">
+      <!-- コンテンツを30文字に省略表示 -->
+      <td class="content-column">
+        <a th:text="${#strings.abbreviate(memo.content, 30)}"
+           th:href="@{/memos/{id}(id=${memo.id})}">
+        </a>
+      </td>
+      <!-- updatedDate を 日付＋時刻で表示。nullなら「未設定」 -->
+      <td class="update-date">
+      <span th:text="${memo.updatedDate != null
+                   ? #temporals.format(memo.updatedDate, 'yyyy/M/d')
+                   : '未設定'}">
+      </span>
+      <span style="margin-left: 10px;"
+              th:text="${memo.updatedDate != null
+                   ? #temporals.format(memo.updatedDate, '[H]:mm')
+                   : '未設定'}">
+      </span>
+      </td>
+      <!-- 削除ボタン -->
+      <td class="delete-button">
+        <form th:action="@{/memos/{id}/delete(id=${memo.id})}"
+              method="post"
+              class="deleteForm">
+          <button type="submit" aria-label="削除">🗑︎</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- スタイリッシュなモーダル -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>本当に削除しますか？</p>
+    <div style="margin-top: 20px;">
+      <button id="confirmDelete" class="modal-button">OK</button>
+      <button id="cancelDelete" class="modal-button">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // モーダル要素取得
+    const deleteModal = document.getElementById("deleteModal");
+    const closeModal = document.querySelector(".close");
+    const confirmDelete = document.getElementById("confirmDelete");
+    const cancelDelete = document.getElementById("cancelDelete");
+
+    let targetForm = null; // どのフォームを削除するかを保持
+
+    // 各削除ボタンをクリック → モーダル表示
+    document.querySelectorAll(".deleteForm button").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        targetForm = e.target.closest("form"); // ボタンが含まれるform要素
+        deleteModal.style.display = "block";
+      });
+    });
+
+    // モーダル: ✕アイコン/キャンセル で閉じる
+    closeModal.addEventListener("click", () => {
+      deleteModal.style.display = "none";
+      targetForm = null;
+    });
+    cancelDelete.addEventListener("click", () => {
+      deleteModal.style.display = "none";
+      targetForm = null;
+    });
+
+    // OKを押すとフォーム送信（削除実行）
+    confirmDelete.addEventListener("click", () => {
+      if (targetForm) {
+        targetForm.submit();
+      }
+    });
+
+    // モーダル背景クリックで閉じる
+    window.addEventListener("click", (event) => {
+      if (event.target === deleteModal) {
+        deleteModal.style.display = "none";
+        targetForm = null;
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
