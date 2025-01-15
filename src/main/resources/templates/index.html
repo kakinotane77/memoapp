@@ -7,17 +7,17 @@
   <title>Memo</title>
   <style>
     .memo-table {
-      width: 80vw;
-      table-layout: fixed;
+      width: 100%;
+      table-layout: auto;
       border-collapse: collapse;
     }
     .memo-table th,
     .memo-table td {
       border-bottom: 1px solid #ccc;
-      padding: 10px;
+      padding: 8px;
     }
     .memo-table .content-column {
-      width: 300px;
+      width: 80%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -25,16 +25,16 @@
     }
     .memo-table .update-date {
       text-align: center;
-      width: 150px;
+      width: auto;
     }
     .memo-table .delete-button {
       text-align: right;
-      width: 50px;
-      padding-left: 10px;
+      width: 48px;
+      padding-left: 8px;
     }
     .memo-table button {
       font-family: 'Noto Emoji', sans-serif;
-      font-size: 20px;
+      font-size: 24px;
       color: #333;
       background: none;
       border: none;
@@ -42,7 +42,7 @@
     }
     .memo-table button:hover {
       background-color: #e0e0e0;
-      border-radius: 5px;
+      border-radius: 4px;
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
     }
 
@@ -60,25 +60,25 @@
     .modal-content {
       background-color: #fefefe;
       margin: 15% auto;
-      padding: 20px;
+      padding: 16px;
       border: 1px solid #888;
-      border-radius: 10px;
+      border-radius: 8px;
       width: 80%;
       max-width: 400px;
       text-align: center;
-      font-size: 18px;
+      font-size: 16px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       position: relative;
     }
     .close {
       color: #aaa;
       float: right;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: bold;
       cursor: pointer;
       position: absolute;
-      top: 10px;
-      right: 15px;
+      top: 8px;
+      right: 16px;
     }
     .close:hover,
     .close:focus {

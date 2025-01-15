@@ -7,18 +7,18 @@
 body {
   color: #2c3e50;
   font-family: 'Noto Serif', serif;
-  padding: 50px;
+  padding: 48px;
   background-color: #F9F9FA;
 }
 
 header {
-  height: 50px;
+  height: 48px;
   width: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   background-color: #e9e9e9;
-  padding: 0 20px;
+  padding: 0 16px;
   position: fixed;
   top: 0;
   left: 0;
@@ -29,7 +29,7 @@ header {
 }
 
 .title-link {
-  margin-left: 50px;
+  margin-left: 48px;
 }
 
 /* ボタン共通スタイル */
@@ -41,14 +41,14 @@ button,
 .memo-table button,
 .toggle-button {
   font-family: 'Noto Emoji', sans-serif; /* 統一フォント */
-  font-size: 20px; /* 統一フォントサイズ */
+  font-size: 24px; /* 統一フォントサイズ */
   color: #333333; /* テキスト色 */
   text-decoration: none; /* 下線を削除 */
   border: none; /* 枠線を削除 */
   background: none; /* 背景色を削除 */
   cursor: pointer; /* ポインタを変更 */
   padding: 4px;
-  margin: auto 15px;
+  margin: auto 16px;
 }
 
 button:hover,
@@ -60,7 +60,7 @@ button:hover,
 .toggle-button:hover {
   color: #000000; /* ホバー時の色 */
   background-color: #e0e0e0; /* ホバー時の背景色 */
-  border-radius: 5px; /* ホバー時の丸み */
+  border-radius: 4px; /* ホバー時の丸み */
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.5); /* ホバー時の影 */
 }
 
@@ -68,12 +68,12 @@ button:hover,
 input,
 textarea {
   font-family: 'Noto Serif', serif;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1.5;
   color: #333;
   border: none;
   outline: none;
-  border-radius: 3px;
+  border-radius: 4px;
   width: 100%;
 }
 
@@ -82,15 +82,15 @@ textarea {
 }
 
 .memo-table {
-  margin: 20px auto;
+  margin: 24px auto;
   width: 60vw;
   border-collapse: collapse;
 }
 
 .memo-table th,
 .memo-table td {
-  height: 45px;
-  padding: 10px;
+  height: 40px;
+  padding: 8px;
   border-bottom: 1px solid #ccc; /* 下線を追加 */
   text-align: left; /* 左寄せ */
 }
@@ -129,7 +129,7 @@ textarea {
   overflow: hidden;
   visibility: hidden;
   box-sizing: border-box;
-  padding: 5px 15px;
+  padding: 4px 16px;
   min-height: 120px;
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -143,7 +143,7 @@ textarea {
   left: 0;
   box-sizing: border-box;
   margin: 0; /* 余白をリセット */
-  padding: 5px 15px;
+  padding: 4px 16px;
   width: 100%;
   height: 100%;
   background-color: transparent;
@@ -167,8 +167,8 @@ textarea {
 
 .form {
   width: 100%;
-  padding: 30px 20px;
-  margin: 0 auto 50px;
+  padding: 24px 24px;
+  margin: 0 auto 48px;
 }
 
 .error {
@@ -185,7 +185,7 @@ textarea {
     width: auto; /* 横幅は内容に応じて調整 */
     overflow-y: auto; /* 縦スクロールを許可 */
     overflow-x: hidden; /* 横スクロールを非表示 */
-    padding: 10px; /* 内側余白 */
+    padding: 8px; /* 内側余白 */
     box-sizing: border-box; /* パディングを含めて計算 */
 }
 
@@ -200,7 +200,7 @@ textarea {
 
 .modal-button {
   font-family: 'Noto Serif', serif; /* 明朝系のNoto Serifを適用 */
-  font-size: 18px;
+  font-size: 16px;
   padding: 8px 16px;
   /* 他のスタイルもお好みで */
 }
