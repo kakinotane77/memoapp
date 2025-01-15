@@ -76,8 +76,7 @@ public class MemoController {
         MemoEntity memo = memoRepository.findById(id);
 
         if (memo == null) {
-            model.addAttribute("error", "指定されたメモが見つかりません。");
-            return "error";
+            return "redirect:/";
         }
 
         MemoForm memoForm = new MemoForm();
