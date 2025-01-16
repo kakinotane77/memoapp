@@ -4,4 +4,11 @@
     <select id="findByUsername" resultType="in.techcamp.memoapp.UserEntity">
         SELECT * FROM users WHERE username = #{username}
     </select>
+    <select id="findByEmail" resultType="in.techcamp.memoapp.UserEntity">
+        SELECT * FROM users WHERE email = #{email}
+    </select>
+    <insert id="insertUser">
+        INSERT INTO users (username, password, role, email)
+        VALUES (#{username}, #{password}, #{role}, #{email})
+    </insert>
 </mapper>

@@ -12,4 +12,5 @@ public class UserEntity {
     private String username;
     private String password;
     private String role; // 権限情報を格納するフィールドを追加
+    private String email; // emailフィールドを追加
 }

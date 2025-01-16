@@ -1,11 +1,11 @@
 package in.techcamp.memoapp;
 
 import org.apache.ibatis.annotations.Mapper;
-import in.techcamp.memoapp.UserEntity;
-import org.apache.ibatis.annotations.Select;
+import java.util.Optional;
 
 @Mapper
 public interface UserMapper {
-    @Select("SELECT * FROM users WHERE username = #{username}")
-    UserEntity findByUsername(String username);
+    Optional<UserEntity> findByUsername(String username);
+    Optional<UserEntity> findByEmail(String email);
+    void insertUser(UserEntity user);
 }

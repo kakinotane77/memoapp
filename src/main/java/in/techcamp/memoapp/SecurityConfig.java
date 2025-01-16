@@ -11,23 +11,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf() // CSRF保護はデフォルトで有効
-                .and()
+                .csrf(csrf -> csrf.disable()) // CSRFを無効化
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll() // 特定URLを許可
-                        .anyRequest().authenticated() // それ以外は認証が必要
+                        .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll() // 認証不要のパス
+                        .anyRequest().authenticated() // その他は認証必須
                 )
                 .formLogin(form -> form
                         .loginPage("/login") // カスタムログインページ
-                        .permitAll()
-                        .defaultSuccessUrl("/") // ログイン成功後のリダイレクト先
+                        .permitAll() // 誰でもアクセス可能
+                        .defaultSuccessUrl("/") // ログイン成功時のリダイレクト先
                         .failureUrl("/login?error") // ログイン失敗時のリダイレクト先
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // ログアウトURL
-                        .logoutSuccessUrl("/login?logout") // ログアウト成功後のリダイレクト先
-                        .permitAll()
+                        .logoutUrl("/logout") // ログアウトのURL
+                        .logoutSuccessUrl("/login?logout") // ログアウト成功時のリダイレクト先
+                        .permitAll() // 誰でもアクセス可能
                 );
+
         return http.build();
     }
 

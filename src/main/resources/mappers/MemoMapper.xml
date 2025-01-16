@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="in.techcamp.memoapp.MemoMapper">
+
+    <!-- ユーザーIDを取得 -->
+    <select id="findUserIdByUsername" resultType="long">
+        SELECT id FROM users WHERE username = #{username}
+    </select>
+
+    <!-- ユーザーIDでメモを検索 -->
+    <select id="findMemosByUserId" resultType="in.techcamp.memoapp.MemoEntity">
+        SELECT * FROM memos WHERE user_id = #{userId}
+    </select>
+
+    <!-- メモIDとユーザーIDで特定のメモを検索 -->
+    <select id="findMemoByIdAndUserId" resultType="in.techcamp.memoapp.MemoEntity">
+        SELECT * FROM memos WHERE id = #{id} AND user_id = #{userId}
+    </select>
+
+    <!-- メモを新規作成 -->
+    <insert id="insertMemo">
+        INSERT INTO memos (user_id, content, display_mode, created_date, updated_date)
+        VALUES (#{userId}, #{content}, #{displayMode}, NOW(), NOW())
+    </insert>
+
+    <!-- メモを更新 -->
+    <update id="updateMemo">
+        UPDATE memos
+        SET content = #{content}, display_mode = #{displayMode}, updated_date = NOW()
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <!-- メモを削除 -->
+    <delete id="deleteMemo">
+        DELETE FROM memos WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+
+</mapper>
