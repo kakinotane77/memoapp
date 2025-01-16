@@ -173,7 +173,7 @@
     <form id="memoForm" th:action="@{/memos}" th:method="post">
         <textarea id="content" name="content" class="horizontal" placeholder="本文を入力してください"></textarea>
         <input type="hidden" id="displayMode" name="displayMode" value="horizontal">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     </form>
 </div>
 

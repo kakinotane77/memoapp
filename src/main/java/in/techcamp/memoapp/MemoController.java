@@ -20,8 +20,8 @@ public class MemoController {
     private final MemoRepository memoRepository;
 
     @ModelAttribute
-    public void addCsrfToken(CsrfToken token, Model model) {
-        model.addAttribute("_csrf", token);
+    public void addCsrfToken(CsrfToken csrfToken, Model model) {
+        model.addAttribute("_csrf", csrfToken);
     }
 
     @GetMapping("/memoForm")
