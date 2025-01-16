@@ -73,34 +73,55 @@ public class MemoController {
     }
 
     @GetMapping("/memos/{id}")
-    public String memoDetail(@PathVariable long id, Model model) {
-        String username = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        MemoEntity memo = memoService.getMemoByIdAndUsername(id, username);
+    public String showMemo(@PathVariable Long id, Model model) {
+        try {
+            // ユーザー情報を取得
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof CustomUserDetails) {
+                String username = ((CustomUserDetails) principal).getUsername();
+                // メモを取得
+                MemoEntity memo = memoService.getMemoByIdAndUsername(id, username);
 
-        if (memo == null) {
-            return "redirect:/";
+                if (memo == null) {
+                    model.addAttribute("error", "メモが見つかりません。");
+                    return "error";  // メモが見つからない場合はエラー表示
+                }
+
+                // メモを表示するためのフォームを準備
+                MemoForm memoForm = new MemoForm();
+                memoForm.setContent(memo.getContent());
+                memoForm.setDisplayMode(memo.getDisplayMode());
+                model.addAttribute("memoForm", memoForm);  // memoFormをビューに渡す
+
+                // メモ情報をビューに渡す
+                model.addAttribute("memo", memo);
+                return "detail"; // 修正: detailテンプレートを使用
+            } else {
+                return "error";
+            }
+        } catch (Exception e) {
+            return "error";
         }
-
-        MemoForm memoForm = new MemoForm();
-        memoForm.setContent(memo.getContent());
-        memoForm.setDisplayMode(memo.getDisplayMode() != null ? memo.getDisplayMode() : "horizontal");
-
-        model.addAttribute("memoForm", memoForm);
-        model.addAttribute("memo", memo);
-        return "detail";
     }
 
     @PostMapping("/memos/{id}/update")
     public String updateMemo(@PathVariable long id, @ModelAttribute MemoForm memoForm, Model model) {
         try {
-            String username = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-            if (memoForm.getContent() == null || memoForm.getContent().trim().isEmpty()) {
-                model.addAttribute("error", "本文を入力してください。");
-                return "detail";
-            }
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof CustomUserDetails) {
+                String username = ((CustomUserDetails) principal).getUsername();
 
-            memoService.updateMemo(id, username, memoForm.getContent(), memoForm.getDisplayMode());
-            return "redirect:/";
+                if (memoForm.getContent() == null || memoForm.getContent().trim().isEmpty()) {
+                    model.addAttribute("error", "本文を入力してください。");
+                    return "detail";
+                }
+
+                memoService.updateMemo(id, username, memoForm.getContent(), memoForm.getDisplayMode());
+                return "redirect:/";
+            } else {
+                model.addAttribute("error", "認証情報が不正です。");
+                return "error";
+            }
         } catch (Exception e) {
             model.addAttribute("error", "メモの更新に失敗しました: " + e.getMessage());
             return "detail";
@@ -110,9 +131,16 @@ public class MemoController {
     @PostMapping("/memos/{id}/delete")
     public String deleteMemo(@PathVariable long id, Model model) {
         try {
-            String username = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-            memoService.deleteMemo(id, username);
-            return "redirect:/";
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof CustomUserDetails) {
+                String username = ((CustomUserDetails) principal).getUsername();
+
+                memoService.deleteMemo(id, username);
+                return "redirect:/";
+            } else {
+                model.addAttribute("error", "認証情報が不正です。");
+                return "error";
+            }
         } catch (Exception e) {
             model.addAttribute("error", "メモの削除に失敗しました: " + e.getMessage());
             return "detail";

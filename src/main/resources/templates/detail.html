@@ -184,6 +184,8 @@
   </div>
 </header>
 
+<div th:if="${error}" class="error-message">${error}</div>
+
 <div class="form">
   <form id="updateForm"
         th:if="${memo != null}"
@@ -221,6 +223,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+      const csrfToken = document.querySelector('input[name="_csrf"]').value;
       const contentField = document.getElementById("content");
       const displayModeField = document.getElementById("displayMode");
       const toggleVertical = document.getElementById("toggleVertical");
@@ -286,22 +289,29 @@
       });
 
       // DisplayModeをサーバーに保存する処理の例
-      function saveDisplayMode(mode) {
-          fetch('/saveDisplayMode', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                  memoId: contentField.getAttribute("data-memo-id"),
-                  displayMode: mode
-              })
-          }).then(response => {
-              if (!response.ok) {
-                  console.error('Failed to save display mode');
-              }
-          });
-      }
+      document.addEventListener("DOMContentLoaded", function () {
+    const csrfToken = document.querySelector('input[name="_csrf"]').value; // CSRFトークンの取得
+
+    function saveDisplayMode(mode) {
+        fetch('/saveDisplayMode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken // CSRFトークンを追加
+            },
+            body: JSON.stringify({
+                memoId: contentField.getAttribute("data-memo-id"),
+                displayMode: mode
+            })
+        }).then(response => {
+            if (!response.ok) {
+                console.error('Failed to save display mode');
+            }
+        });
+    }
+
+    // 他の既存コードはそのまま
+});
 
       // ヘッダーのフェードイン・フェードアウト
       document.addEventListener("mousemove", (event) => {

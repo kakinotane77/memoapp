@@ -196,6 +196,9 @@
         const charCount = document.getElementById("charCount");
         const closeModal = document.querySelector(".close");
 
+        // CSRFトークンを取得
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
         // 文字数カウント
         contentField.addEventListener("input", () => {
             const pureText = contentField.value.replace(/[\r\n]/g, "");
@@ -225,7 +228,24 @@
             if (contentField.value.trim() === "") {
                 modal.style.display = "block"; // モーダルを表示
             } else {
-                document.getElementById("memoForm").submit(); // フォームを送信
+                // CSRFトークンをリクエストヘッダーに追加
+                fetch('/saveDisplayMode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken // CSRFトークンを追加
+                    },
+                    body: JSON.stringify({
+                        content: contentField.value,
+                        displayMode: document.getElementById("displayMode").value
+                    })
+                }).then(response => {
+                    if (!response.ok) {
+                        console.error('Failed to save data');
+                    } else {
+                        document.getElementById("memoForm").submit(); // フォーム送信
+                    }
+                });
             }
         });
 
