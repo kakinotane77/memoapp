@@ -24,40 +24,40 @@ repositories {
 }
 
 dependencies {
+	// Spring Boot dependencies
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// MyBatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+
+	// Thymeleaf extras for Java 8 time
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
 
 	// Validation
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 	implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
 
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 
 	// MySQL Connector/J
 	runtimeOnly 'com.mysql:mysql-connector-j:8.3.0'
 
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'org.mockito:mockito-core'
+	// SLF4J & Logback
+	implementation 'org.slf4j:slf4j-api:2.0.7'
+	implementation 'ch.qos.logback:logback-classic:1.4.11'
+
+	// Testing dependencies
+	testImplementation 'org.springframework.boot:spring-boot-starter-test' // Includes Mockito and JUnit
 	testImplementation 'org.mockito:mockito-junit-jupiter'
-
-
-	// JUnit Jupiter API
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.0'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
+	testImplementation 'com.h2database:h2'
 
 	// JUnit Platform Launcher
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.0'
-
-	// Spring Security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.security:spring-security-crypto'
-
-	implementation 'org.slf4j:slf4j-api:2.0.7'
-	implementation 'ch.qos.logback:logback-classic:1.4.11'
 }
 
 tasks.named('test') {

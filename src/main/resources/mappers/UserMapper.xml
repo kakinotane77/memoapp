@@ -21,4 +21,12 @@
         VALUES (#{username}, #{password}, #{email}, #{role})
     </insert>
 
+    <!-- ユーザー名またはメールアドレスでユーザーを検索 -->
+    <select id="findByUsernameOrEmail" parameterType="map" resultType="in.techcamp.memoapp.UserEntity">
+        SELECT *
+        FROM users
+        WHERE username = #{username} OR email = #{email}
+        LIMIT 1
+    </select>
+
 </mapper>
