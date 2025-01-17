@@ -49,9 +49,17 @@ public class AuthController {
             RedirectAttributes redirectAttributes
     ) {
         try {
+            // バリデーション: パスワードのチェック
+            if (!password.matches("^(?=.*[a-zA-Z])(?=.*\\d).{8,}$")) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "パスワードは8文字以上で<br>英数字を含む必要があります。");
+                return "redirect:/register";
+            }
+
             // ユーザーの重複確認
             if (userService.userExists(username, email)) {
-                redirectAttributes.addFlashAttribute("errorMessage", "既に使用されているユーザー名またはメールアドレスです");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "既に使用されているユーザー名<br>またはメールアドレスです。");
                 return "redirect:/register";
             }
 
@@ -85,13 +93,22 @@ public class AuthController {
     @GetMapping("/login")
     public String showLoginPage(
             @RequestParam(required = false) String error,
+            @RequestParam(required = false) String logout,
             Model model
     ) {
         model.addAttribute("isLogin", true);
         model.addAttribute("pageTitle", "Login");
+
+        // エラーがある場合、カスタムエラーメッセージを設定
         if (error != null) {
-            model.addAttribute("errorMessage", error);
+            model.addAttribute("errorMessage", "ユーザー名またはパスワードが間違っています。");
         }
+
+        // ログアウトメッセージ
+        if (logout != null) {
+            model.addAttribute("successMessage", "正常にログアウトしました。");
+        }
+
         return "auth";
     }
 }

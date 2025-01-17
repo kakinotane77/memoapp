@@ -32,6 +32,7 @@
       font-size: 24px;
       color: #333;
       text-decoration: none;
+      font-weight: bold;
     }
 
     .auth-container {
@@ -51,13 +52,6 @@
       color: #333;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      color: #555;
-    }
-
     input {
       width: calc(100% - 16px);
       padding: 8px;
@@ -65,26 +59,47 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       box-sizing: border-box;
+      font-family: 'Noto Serif', serif;
+    }
+
+    input::placeholder {
+      font-size: 16px;
+      font-family: 'Noto Serif', serif;
+      color: #aaa;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     button {
-      width: 100%;
-      padding: 10px;
+      width: auto;
+      padding: 8px 16px;
       font-size: 16px;
       color: #fff;
-      background-color: #007BFF;
+      background-color: #6c757d;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       transition: background-color 0.3s;
+      margin-top: 8px;
+      font-family: 'Noto Serif', serif;
     }
 
     button:hover {
-      background-color: #0056b3;
+      background-color: #5a6268;
     }
 
     .error-message {
       color: red;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .success-message {
+      color: #333;
       margin-bottom: 16px;
       text-align: center;
     }
@@ -94,28 +109,21 @@
       text-align: center;
       margin-top: 16px;
       font-size: 14px;
-      color: #007BFF;
+      color: #333;
       text-decoration: none;
+      font-family: 'Noto Serif', serif;
     }
 
     .toggle-link:hover {
       text-decoration: underline;
-    }
-
-    .debug-info {
-      margin-top: 16px;
-      font-size: 12px;
-      color: #555;
-      background-color: #f9f9f9;
-      padding: 8px;
-      border: 1px dashed #ccc;
+      color: #000;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <a href="/" class="header-title">🏠 Memo App</a>
+  <a href="/" class="header-title">MeMO</a>
 </header>
 
 <div class="auth-container">
@@ -123,18 +131,20 @@
 
   <!-- エラーメッセージ -->
   <div th:if="${errorMessage}" class="error-message">
-    <p th:text="${errorMessage}"></p>
+    <p th:utext="${errorMessage}"></p>
+  </div>
+
+  <!-- 成功メッセージ -->
+  <div th:if="${successMessage}" class="success-message">
+    <p th:text="${successMessage}"></p>
   </div>
 
   <!-- ログインフォーム -->
   <form th:if="${isLogin}" action="/login" method="post">
     <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-    <label for="username">ユーザー名:</label>
-    <input type="text" id="username" name="username" required>
-
-    <label for="password">パスワード:</label>
-    <input type="password" id="password" name="password" required>
+    <input type="text" id="username" name="username" placeholder="ユーザー名" required>
+    <input type="password" id="password" name="password" placeholder="パスワード" required>
 
     <button type="submit">ログイン</button>
   </form>
@@ -143,14 +153,9 @@
   <form th:if="${!isLogin}" action="/register" method="post">
     <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-    <label for="username">ユーザー名:</label>
-    <input type="text" id="username" name="username" required>
-
-    <label for="password">パスワード:</label>
-    <input type="password" id="password" name="password" required>
-
-    <label for="email">メールアドレス:</label>
-    <input type="email" id="email" name="email" required>
+    <input type="text" id="username" name="username" placeholder="ユーザー名" required>
+    <input type="password" id="password" name="password" placeholder="パスワード" required>
+    <input type="email" id="email" name="email" placeholder="メールアドレス" required>
 
     <button type="submit">登録</button>
   </form>
@@ -159,12 +164,6 @@
   <a th:href="${isLogin ? '/register' : '/login'}"
      th:text="${isLogin ? '新規登録はこちら' : 'ログインはこちら'}"
      class="toggle-link"></a>
-
-  <!-- デバッグ情報 -->
-  <div class="debug-info">
-    <p th:text="'isLogin: ' + ${isLogin}"></p>
-    <p th:if="${_csrf != null}" th:text="'CSRF Parameter: ' + ${_csrf.parameterName} + ', Token: ' + ${_csrf.token}"></p>
-  </div>
 </div>
 
 </body>
