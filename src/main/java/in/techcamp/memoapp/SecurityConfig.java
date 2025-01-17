@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll()  // H2コンソールへのアクセスを許可
                         .requestMatchers("/register", "/login", "/logout", "/saveDisplayMode").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 静的リソース
+                        .requestMatchers("/textBasedBrowserLauncher", "/css/**", "/js/**", "/images/**").permitAll() // 静的リソース
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
