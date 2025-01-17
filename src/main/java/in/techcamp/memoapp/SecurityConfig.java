@@ -1,9 +1,18 @@
+package in.techcamp.memoapp;
+
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class SecurityConfig {
@@ -11,28 +20,46 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRFを無効化
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/saveDisplayMode")
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll() // 認証不要のパス
-                        .anyRequest().authenticated() // その他は認証必須
+                        .requestMatchers("/register", "/login", "/logout", "/saveDisplayMode").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 静的リソース
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // カスタムログインページ
-                        .permitAll() // 誰でもアクセス可能
-                        .defaultSuccessUrl("/") // ログイン成功時のリダイレクト先
-                        .failureUrl("/login?error") // ログイン失敗時のリダイレクト先
+                        .loginPage("/login")
+                        .usernameParameter("username") // HTML フォームの name 属性と一致させる
+                        .passwordParameter("password") // HTML フォームの name 属性と一致させる
+                        .permitAll()
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true") // URL パラメータを具体化
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // ログアウトのURL
-                        .logoutSuccessUrl("/login?logout") // ログアウト成功時のリダイレクト先
-                        .permitAll() // 誰でもアクセス可能
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // セッションを必ず生成
+                        .maximumSessions(1) // 同時ログイン数を制限（オプション）
+                        .maxSessionsPreventsLogin(false)
                 );
-
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder(); // 複数のエンコーダーに対応
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) throws Exception {
+        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+        return authBuilder.build();
+    }
+
 }

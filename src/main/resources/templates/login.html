@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="login-container">
+  <h1>Login</h1>
+
+  <!-- エラー表示 -->
+  <p th:if="${error}" style="color: red;" th:text="${error}"></p>
+
+  <!-- ログアウトメッセージ -->
+  <p th:if="${logout}" style="color: green;" th:text="${logout}"></p>
+
+  <!-- ログインフォーム -->
+  <form action="/login" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+    <div>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+    <div>
+      <button type="submit">Login</button>
+    </div>
+  </form>
+
+  <div class="links">
+    <a href="/register">Register here</a>
+  </div>
+</div>
+</body>
+</html>

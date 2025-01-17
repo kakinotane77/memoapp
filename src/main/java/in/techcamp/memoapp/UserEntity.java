@@ -11,6 +11,14 @@ public class UserEntity {
     private Long id;
     private String username;
     private String password;
-    private String role; // 権限情報を格納するフィールドを追加
-    private String email; // emailフィールドを追加
+    private String role;
+    private String email;
+
+    // 引数を受け取るコンストラクタ
+    public UserEntity(String username, String password, String email, String role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
 }

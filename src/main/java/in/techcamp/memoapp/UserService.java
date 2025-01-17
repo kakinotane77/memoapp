@@ -12,13 +12,17 @@ public class UserService {
     }
 
     public void registerUser(UserEntity userEntity) {
-        // メールアドレスの重複チェックのみを行う
-        Optional<UserEntity> existingUserByEmail = userMapper.findByEmail(userEntity.getEmail());
-        if (existingUserByEmail.isPresent()) {
-            throw new IllegalArgumentException("Email already exists: " + userEntity.getEmail());
+        // 重複チェックは userExists() で行うので、ここでは不要またはメールだけのチェックにする
+        if (userExists(userEntity.getUsername(), userEntity.getEmail())) {
+            throw new IllegalArgumentException("既に使用されているユーザー名またはメールアドレスです");
         }
-
-        // ユーザー登録処理
         userMapper.insertUser(userEntity);
+    }
+
+    // ユーザー名またはメールアドレスで既にユーザーが登録されているかチェックするメソッドを追加
+    public boolean userExists(String username, String email) {
+        Optional<UserEntity> userByUsername = userMapper.findByUsername(username);
+        Optional<UserEntity> userByEmail = userMapper.findByEmail(email);
+        return userByUsername.isPresent() || userByEmail.isPresent();
     }
 }

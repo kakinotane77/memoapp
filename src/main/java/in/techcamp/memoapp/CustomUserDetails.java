@@ -2,33 +2,31 @@ package in.techcamp.memoapp;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collection;
+import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
 
-    private String username;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
+    private final UserEntity userEntity;
 
-    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.username = username;
-        this.password = password;
-        this.authorities = authorities;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
+    public CustomUserDetails(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return Collections.singletonList(() -> userEntity.getRole());
+    }
+
+    @Override
+    public String getPassword() {
+        return userEntity.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return userEntity.getUsername();
     }
 
     @Override
@@ -49,5 +47,9 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public UserEntity getUserEntity() {
+        return userEntity;
     }
 }

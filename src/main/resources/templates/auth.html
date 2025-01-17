@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400&display=swap" rel="stylesheet">
   <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
-  <title>ユーザー登録</title>
+  <title>ログイン / ユーザー登録</title>
   <style>
     body {
       font-family: 'Noto Serif', serif;
@@ -34,7 +34,7 @@
       text-decoration: none;
     }
 
-    .form-container {
+    .auth-container {
       margin: 80px auto 0;
       width: 100%;
       max-width: 400px;
@@ -44,7 +44,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .form-container h1 {
+    h1 {
       text-align: center;
       margin-bottom: 24px;
       font-size: 24px;
@@ -89,7 +89,7 @@
       text-align: center;
     }
 
-    .link {
+    .toggle-link {
       display: block;
       text-align: center;
       margin-top: 16px;
@@ -98,8 +98,17 @@
       text-decoration: none;
     }
 
-    .link:hover {
+    .toggle-link:hover {
       text-decoration: underline;
+    }
+
+    .debug-info {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #555;
+      background-color: #f9f9f9;
+      padding: 8px;
+      border: 1px dashed #ccc;
     }
   </style>
 </head>
@@ -109,17 +118,30 @@
   <a href="/" class="header-title">🏠 Memo App</a>
 </header>
 
-<div class="form-container">
-  <h1>ユーザー登録</h1>
+<div class="auth-container">
+  <h1 th:text="${isLogin ? 'ログイン' : 'ユーザー登録'}"></h1>
 
   <!-- エラーメッセージ -->
   <div th:if="${errorMessage}" class="error-message">
     <p th:text="${errorMessage}"></p>
   </div>
 
+  <!-- ログインフォーム -->
+  <form th:if="${isLogin}" action="/login" method="post">
+    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+    <label for="username">ユーザー名:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">パスワード:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">ログイン</button>
+  </form>
+
   <!-- 登録フォーム -->
-  <form action="/register" method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+  <form th:if="${!isLogin}" action="/register" method="post">
+    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
     <label for="username">ユーザー名:</label>
     <input type="text" id="username" name="username" required>
@@ -133,7 +155,16 @@
     <button type="submit">登録</button>
   </form>
 
-  <a href="/login" class="link">ログインページへ戻る</a>
+  <!-- 切り替えリンク -->
+  <a th:href="${isLogin ? '/register' : '/login'}"
+     th:text="${isLogin ? '新規登録はこちら' : 'ログインはこちら'}"
+     class="toggle-link"></a>
+
+  <!-- デバッグ情報 -->
+  <div class="debug-info">
+    <p th:text="'isLogin: ' + ${isLogin}"></p>
+    <p th:if="${_csrf != null}" th:text="'CSRF Parameter: ' + ${_csrf.parameterName} + ', Token: ' + ${_csrf.token}"></p>
+  </div>
 </div>
 
 </body>

@@ -2,15 +2,13 @@ package in.techcamp.memoapp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.ui.Model;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.web.csrf.CsrfToken;
 import in.techcamp.memoapp.CustomUserDetails;
 
@@ -144,6 +142,44 @@ public class MemoController {
         } catch (Exception e) {
             model.addAttribute("error", "メモの削除に失敗しました: " + e.getMessage());
             return "detail";
+        }
+    }
+
+    @PostMapping("/saveDisplayMode")
+    public ResponseEntity<String> saveDisplayMode(@RequestBody DisplayModeRequest request) {
+        // リクエストボディからデータを取得
+        String content = request.getContent();
+        String displayMode = request.getDisplayMode();
+
+        // デバッグ用ログ（必要に応じて削除）
+        System.out.println("Content: " + content);
+        System.out.println("DisplayMode: " + displayMode);
+
+        // ここでビジネスロジックを実行またはデータを保存
+        // データベースに保存する処理を実装
+
+        return ResponseEntity.ok("Display mode saved successfully");
+    }
+
+    public static class DisplayModeRequest {
+        private String content;
+        private String displayMode;
+
+        // Getters and Setters
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public String getDisplayMode() {
+            return displayMode;
+        }
+
+        public void setDisplayMode(String displayMode) {
+            this.displayMode = displayMode;
         }
     }
 }
