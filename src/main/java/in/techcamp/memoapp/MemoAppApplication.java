@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MemoAppApplication {
 
 	public static void main(String[] args) {
-		// 環境変数を取得
+		// PostgreSQL 用の環境変数を取得
 		String databaseUrl = System.getenv("DATABASE_URL");
 		String databaseUsername = System.getenv("POSTGRES_USERNAME");
 		String databasePassword = System.getenv("POSTGRES_PASSWORD");
@@ -21,7 +21,7 @@ public class MemoAppApplication {
 			);
 		}
 
-		// 環境変数を Spring Boot プロパティに設定
+		// Spring Boot のデータソースプロパティに設定
 		System.setProperty("spring.datasource.url", databaseUrl);
 		System.setProperty("spring.datasource.username", databaseUsername);
 		System.setProperty("spring.datasource.password", databasePassword);
