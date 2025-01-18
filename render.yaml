@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: memoapp
+    env: docker
+    dockerfilePath: ./Dockerfile
+    region: ohio
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://dpg-cu5gcelsvqrc7387k93g-a:5432/memo_app_java_pg
+      - key: SPRING_DATASOURCE_USERNAME
+        value: memo_app_java_pg_user
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: 1buahCD67Eo3PUD8jrV5cOiuwkWedoou
