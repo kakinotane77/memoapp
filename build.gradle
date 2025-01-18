@@ -27,9 +27,6 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	// MySQL Connector/J
-	runtimeOnly 'com.mysql:mysql-connector-j:8.3.0'
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test' // JUnit + Mockito
 	testImplementation 'org.mockito:mockito-core:5.2.0'
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
