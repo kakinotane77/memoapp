@@ -5,7 +5,7 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # ビルドしたJARファイルをコンテナにコピー
-COPY build/libs/memoapp.jar app.jar
+COPY ./build/libs/memoapp.jar /app/app.jar
 
 # アプリケーションを起動
 ENTRYPOINT ["java", "-jar", "app.jar"]

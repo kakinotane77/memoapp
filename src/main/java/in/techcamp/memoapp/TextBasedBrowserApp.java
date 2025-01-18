@@ -1,155 +1,109 @@
 package in.techcamp.memoapp;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.stage.Stage;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-public class TextBasedBrowserApp extends Application {
+import java.io.IOException;
+import java.util.Scanner;
 
-    @Override
-    public void start(Stage primaryStage) {
-        WebView browser = new WebView();
-        WebEngine webEngine = browser.getEngine();
+public class TextBasedBrowserApp {
 
-        // JavaScriptを完全に無効化
-        webEngine.setJavaScriptEnabled(false);
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String url = "https://duckduckgo.com/html/"; // 初期URL
 
-        // カスタムUser-Agentでテキストベースを模倣
-        webEngine.setUserAgent("Mozilla/5.0 (compatible; Lynx/2.8.9rel.1) Text-Based Browser");
+        while (true) {
+            System.out.println("\nAccessing: " + url);
 
-        // DuckDuckGo HTMLバージョンをロード
-        webEngine.load("https://duckduckgo.com/html/");
+            try {
+                // URL から HTML を取得
+                Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0 (compatible; Lynx/2.8.9rel.1) Text-Based Browser").get();
 
-        // ページのシンプル表示を設定
-        configureSimpleTextDisplay(webEngine);
+                // ページタイトルを表示
+                System.out.println("\nTitle: " + doc.title());
 
-        BorderPane root = new BorderPane();
-        root.setCenter(browser);
+                // ページ内容を表示
+                System.out.println("\nContent:");
+                System.out.println(getTextContent(doc));
 
-        Scene scene = new Scene(root, 800, 600);
+                // リンク一覧を表示
+                System.out.println("\nLinks:");
+                printLinks(doc);
 
-        // キーボードイベントリスナーを追加
-        scene.setOnKeyPressed(event -> {
-            if (!isFocusedOnInput(browser)) { // フォーカスが入力フィールドでない場合
-                if ("H".equalsIgnoreCase(event.getText())) {
-                    webEngine.load("https://duckduckgo.com/html/");
-                }
+            } catch (IOException e) {
+                System.err.println("Error loading page: " + e.getMessage());
             }
-        });
 
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Text-Based Browser");
-        primaryStage.show();
-    }
+            // 次の操作を入力
+            System.out.println("\nEnter a number to follow a link, 'h' to reload the home page, or 'q' to quit:");
+            String input = scanner.nextLine();
 
-    /**
-     * ページをテキストベースに最適化
-     *
-     * @param webEngine WebEngineインスタンス
-     */
-    private void configureSimpleTextDisplay(WebEngine webEngine) {
-        webEngine.documentProperty().addListener((observable, oldDoc, newDoc) -> {
-            if (newDoc != null) {
-                String script =
-                        // 基本の背景と文字色を設定
-                        "document.body.style.backgroundColor = 'transparent';" +  // 背景を透明に
-                                "document.body.style.color = 'black';" +
-                                "document.body.style.fontFamily = 'monospace';" +
-                                "document.body.style.fontSize = '20px';" +
-
-                                // 全要素の色と背景を強制的に白黒に
-                                "Array.from(document.querySelectorAll('*')).forEach(el => {" +
-                                "    el.style.backgroundColor = 'transparent';" + // 背景を透明に
-                                "    el.style.color = 'black';" +
-                                "    el.style.borderColor = 'black';" +
-                                "    el.style.textDecoration = 'none';" + // 下線を初期化
-                                "    el.style.boxShadow = 'none';" +
-                                "    el.style.outline = 'none';" +
-                                "    el.style.backgroundImage = 'none';" +
-                                "});" +
-
-                                // リンクを青い文字＆下線付きに
-                                "Array.from(document.querySelectorAll('a')).forEach(link => {" +
-                                "    link.style.color = 'blue';" +
-                                "    link.style.textDecoration = 'underline';" +
-                                "});" +
-
-                                // imgタグの置き換え
-                                "Array.from(document.querySelectorAll('img, iframe, video')).forEach(el => {" +
-                                "    var altText = el.getAttribute('alt') || '[Embedded Media]';" +
-                                "    var textNode = document.createTextNode(altText);" +
-                                "    el.replaceWith(textNode);" +
-                                "});" +
-
-                                // SVG内の画像削除
-                                "Array.from(document.querySelectorAll('svg')).forEach(svg => {" +
-                                "    var textNode = document.createTextNode('[SVG Content]');" +
-                                "    svg.replaceWith(textNode);" +
-                                "});" +
-
-                                // Base64画像の削除
-                                "Array.from(document.querySelectorAll('img[src^=\"data:image/\"]')).forEach(img => {" +
-                                "    var altText = img.getAttribute('alt') || '[Embedded Image]';" +
-                                "    var textNode = document.createTextNode(altText);" +
-                                "    img.replaceWith(textNode);" +
-                                "});" +
-
-                                // 動的変更の監視
-                                "new MutationObserver((mutations) => {" +
-                                "    mutations.forEach(mutation => {" +
-                                "        Array.from(mutation.addedNodes).forEach(node => {" +
-                                "            if (node.tagName === 'IMG' || node.tagName === 'VIDEO' || node.tagName === 'IFRAME') {" +
-                                "                var altText = node.getAttribute('alt') || '[Embedded Media]';" +
-                                "                var textNode = document.createTextNode(altText);" +
-                                "                node.replaceWith(textNode);" +
-                                "            } else if (node.nodeType === Node.ELEMENT_NODE) {" +
-                                "                node.style.backgroundColor = 'transparent';" + // 背景透明
-                                "                node.style.color = 'black';" +
-                                "                node.style.borderColor = 'black';" +
-                                "                node.style.textDecoration = 'none';" +
-                                "                node.style.boxShadow = 'none';" +
-                                "                node.style.outline = 'none';" +
-                                "                node.style.backgroundImage = 'none';" +
-                                "                if (node.tagName === 'A') {" + // 新しいリンク要素にスタイル適用
-                                "                    node.style.color = 'blue';" +
-                                "                    node.style.textDecoration = 'underline';" +
-                                "                }" +
-                                "            }" +
-                                "        });" +
-                                "    });" +
-                                "}).observe(document.body, { childList: true, subtree: true });";
-
+            if (input.equalsIgnoreCase("q")) {
+                System.out.println("Exiting browser.");
+                break;
+            } else if (input.equalsIgnoreCase("h")) {
+                url = "https://duckduckgo.com/html/"; // ホームページに戻る
+            } else {
                 try {
-                    webEngine.executeScript(script);
-                } catch (Exception e) {
-                    System.err.println("Error configuring display: " + e.getMessage());
+                    int linkIndex = Integer.parseInt(input);
+                    String nextUrl = getLinkByIndex(url, linkIndex);
+                    if (nextUrl != null) {
+                        url = nextUrl;
+                    } else {
+                        System.out.println("Invalid link number.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number or a valid command.");
                 }
             }
-        });
+        }
+
+        scanner.close();
     }
 
     /**
-     * 現在フォーカスされている要素が入力フィールドかどうかを判定
+     * ページ本文のテキストを抽出
      *
-     * @param browser WebViewインスタンス
-     * @return 入力フィールドがフォーカスされている場合はtrue
+     * @param doc Jsoup の Document インスタンス
+     * @return ページ本文のテキスト
      */
-    private boolean isFocusedOnInput(WebView browser) {
-        try {
-            String focusedElementTag = (String) browser.getEngine().executeScript(
-                    "document.activeElement.tagName.toLowerCase();"
-            );
-            return "input".equals(focusedElementTag) || "textarea".equals(focusedElementTag);
-        } catch (Exception e) {
-            return false;
+    private static String getTextContent(Document doc) {
+        Element body = doc.body();
+        return body.text(); // 本文のテキストのみ取得
+    }
+
+    /**
+     * ページ内のリンクを一覧表示
+     *
+     * @param doc Jsoup の Document インスタンス
+     */
+    private static void printLinks(Document doc) {
+        Elements links = doc.select("a[href]"); // href 属性を持つ <a> 要素を選択
+        int index = 1;
+        for (Element link : links) {
+            System.out.printf("[%d] %s (%s)%n", index++, link.text(), link.absUrl("href"));
         }
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    /**
+     * リンクのインデックスから URL を取得
+     *
+     * @param baseUrl 現在のページの URL
+     * @param index   リンクのインデックス（1 から始まる）
+     * @return リンクの URL
+     */
+    private static String getLinkByIndex(String baseUrl, int index) {
+        try {
+            Document doc = Jsoup.connect(baseUrl).get();
+            Elements links = doc.select("a[href]");
+            if (index > 0 && index <= links.size()) {
+                return links.get(index - 1).absUrl("href");
+            }
+        } catch (IOException e) {
+            System.err.println("Error retrieving links: " + e.getMessage());
+        }
+        return null;
     }
 }

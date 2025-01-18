@@ -3,3 +3,4 @@ build/
 out/
 .git
 .env
+!build/libs/memoapp.jar

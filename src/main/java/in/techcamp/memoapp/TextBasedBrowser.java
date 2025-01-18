@@ -1,39 +1,75 @@
 package in.techcamp.memoapp;
 
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-public class TextBasedBrowser extends BorderPane {
-    private final WebView webView;
-    private final WebEngine webEngine;
-    private final TextArea textArea;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class TextBasedBrowser {
+    private final Scanner scanner;
 
     public TextBasedBrowser() {
-        // WebViewとWebEngineを初期化
-        webView = new WebView();
-        webEngine = webView.getEngine();
-
-        // テキスト表示用のTextArea
-        textArea = new TextArea();
-        textArea.setWrapText(true);
-        textArea.setEditable(false);
-
-        // レイアウトの設定
-        this.setCenter(textArea);
-
-        // Webページ読み込みとテキスト抽出
-        webEngine.documentProperty().addListener((obs, oldDoc, newDoc) -> {
-            if (newDoc != null) {
-                String content = webEngine.executeScript("document.body.innerText").toString();
-                textArea.setText(content);
-            }
-        });
+        scanner = new Scanner(System.in);
     }
 
-    // ページの読み込み
+    // URLを読み込み、テキストを表示
     public void loadURL(String url) {
-        webEngine.load(url);
+        try {
+            // HTMLを取得して解析
+            Document document = Jsoup.connect(url).get();
+            String textContent = document.body().text();
+
+            // ページのテキストを表示
+            System.out.println("==== Page Content ====");
+            System.out.println(textContent);
+
+            // ページのリンクを抽出して表示
+            Elements links = document.select("a[href]");
+            System.out.println("\n==== Links ====");
+            int index = 1;
+            for (Element link : links) {
+                System.out.printf("[%d] %s (%s)%n", index++, link.text(), link.attr("abs:href"));
+            }
+
+            // ユーザー入力によるリンクのフォロー
+            handleUserInput(links);
+        } catch (IOException e) {
+            System.err.println("Error loading URL: " + e.getMessage());
+        }
+    }
+
+    // ユーザーの入力を処理
+    private void handleUserInput(Elements links) {
+        System.out.println("\nEnter the number of the link to follow, or 'q' to quit:");
+        while (true) {
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("q")) {
+                System.out.println("Exiting browser.");
+                break;
+            }
+            try {
+                int linkIndex = Integer.parseInt(input) - 1;
+                if (linkIndex >= 0 && linkIndex < links.size()) {
+                    String nextURL = links.get(linkIndex).attr("abs:href");
+                    System.out.println("\nLoading: " + nextURL);
+                    loadURL(nextURL);
+                } else {
+                    System.out.println("Invalid link number. Try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number or 'q' to quit.");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        TextBasedBrowser browser = new TextBasedBrowser();
+        System.out.println("Enter a URL to browse:");
+        Scanner scanner = new Scanner(System.in);
+        String url = scanner.nextLine();
+        browser.loadURL(url);
     }
 }
