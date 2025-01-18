@@ -21,15 +21,16 @@ public class MemoAppApplication {
 				throw new IllegalArgumentException("Required environment variable DATABASE_URL is not set");
 			}
 
-			// DATABASE_URL をパース
+			// URI の形式で DATABASE_URL をパース
 			URI dbUri = new URI(databaseUrl);
 
 			// JDBC URL を構築
 			String jdbcUrl = String.format("jdbc:postgresql://%s:%d%s", dbUri.getHost(), dbUri.getPort(), dbUri.getPath());
 
 			// ユーザー名とパスワードを取得
-			String username = dbUri.getUserInfo().split(":")[0];
-			String password = dbUri.getUserInfo().split(":")[1];
+			String[] userInfo = dbUri.getUserInfo().split(":");
+			String username = userInfo[0];
+			String password = userInfo[1];
 
 			// Spring Boot のデータソースプロパティに設定
 			System.setProperty("spring.datasource.url", jdbcUrl);
