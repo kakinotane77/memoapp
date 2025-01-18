@@ -13,37 +13,35 @@ public class MemoAppApplication {
 
 	public static void main(String[] args) {
 		try {
-			// Renderの環境変数から DATABASE_URL を取得
+			// Render の DATABASE_URL を取得
 			String databaseUrl = System.getenv("DATABASE_URL");
 
-			// DATABASE_URL が設定されていない場合エラーをスロー
 			if (databaseUrl == null) {
 				throw new IllegalArgumentException("Required environment variable DATABASE_URL is not set");
 			}
 
-			// URI オブジェクトを作成
+			// URI オブジェクトとして解析
 			URI dbUri = new URI(databaseUrl);
 
-			// JDBC URL を構築
+			// jdbcUrl を正しい形式で作成
 			String jdbcUrl = String.format("jdbc:postgresql://%s:%d%s",
 					dbUri.getHost(),
 					dbUri.getPort(),
 					dbUri.getPath()
 			);
 
-			// ユーザー名とパスワードを分割して取得
+			// ユーザー情報を分解
 			String[] userInfo = dbUri.getUserInfo().split(":");
 			String username = userInfo[0];
 			String password = userInfo[1];
 
-			// 確認用ログ（本番環境では削除）
-			System.out.println("JDBC URL: " + jdbcUrl);
-			System.out.println("Username: " + username);
-
-			// Spring Boot のプロパティに設定
+			// Spring Boot プロパティに設定
 			System.setProperty("spring.datasource.url", jdbcUrl);
 			System.setProperty("spring.datasource.username", username);
 			System.setProperty("spring.datasource.password", password);
+
+			// 確認用ログ
+			System.out.println("JDBC URL: " + jdbcUrl);
 
 			// アプリケーション起動
 			SpringApplication.run(MemoAppApplication.class, args);
