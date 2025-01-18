@@ -38,3 +38,5 @@ out/
 
 ### Configuration files ###
 .env
+
+!build/libs/memoapp.jar
