@@ -1,6 +1,5 @@
 package in.techcamp.memoapp;
 
-import in.techcamp.memoapp.DotenvConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,19 +10,21 @@ public class MemoAppApplication {
 
 	public static void main(String[] args) {
 		// 環境変数を取得
-		String mysqlUrl = DotenvConfig.get("MYSQL_URL");
-		String mysqlUsername = DotenvConfig.get("MYSQL_USERNAME");
-		String mysqlPassword = DotenvConfig.get("MYSQL_PASSWORD");
+		String databaseUrl = System.getenv("DATABASE_URL");
+		String databaseUsername = System.getenv("POSTGRES_USERNAME");
+		String databasePassword = System.getenv("POSTGRES_PASSWORD");
 
 		// 環境変数が設定されていない場合にエラーをスロー
-		if (mysqlUrl == null || mysqlUsername == null || mysqlPassword == null) {
-			throw new IllegalArgumentException("Required environment variables (MYSQL_URL, MYSQL_USERNAME, MYSQL_PASSWORD) are not set");
+		if (databaseUrl == null || databaseUsername == null || databasePassword == null) {
+			throw new IllegalArgumentException(
+					"Required environment variables (DATABASE_URL, POSTGRES_USERNAME, POSTGRES_PASSWORD) are not set"
+			);
 		}
 
 		// 環境変数を Spring Boot プロパティに設定
-		System.setProperty("MYSQL_URL", mysqlUrl);
-		System.setProperty("MYSQL_USERNAME", mysqlUsername);
-		System.setProperty("MYSQL_PASSWORD", mysqlPassword);
+		System.setProperty("spring.datasource.url", databaseUrl);
+		System.setProperty("spring.datasource.username", databaseUsername);
+		System.setProperty("spring.datasource.password", databasePassword);
 
 		// アプリケーション起動
 		SpringApplication.run(MemoAppApplication.class, args);
