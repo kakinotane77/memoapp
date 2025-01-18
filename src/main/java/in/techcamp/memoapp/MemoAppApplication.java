@@ -11,14 +11,10 @@ public class MemoAppApplication {
 	public static void main(String[] args) {
 		// 環境変数を取得
 		String rawDatabaseUrl = System.getenv("DATABASE_URL");
-		String databaseUsername = System.getenv("POSTGRES_USERNAME");
-		String databasePassword = System.getenv("POSTGRES_PASSWORD");
 
 		// 環境変数が設定されていない場合にエラーをスロー
-		if (rawDatabaseUrl == null || databaseUsername == null || databasePassword == null) {
-			throw new IllegalArgumentException(
-					"Required environment variables (DATABASE_URL, POSTGRES_USERNAME, POSTGRES_PASSWORD) are not set"
-			);
+		if (rawDatabaseUrl == null) {
+			throw new IllegalArgumentException("Required environment variable (DATABASE_URL) is not set");
 		}
 
 		// DATABASE_URL を解析して JDBC URL を生成
@@ -26,8 +22,6 @@ public class MemoAppApplication {
 
 		// Spring Boot のデータソースプロパティに設定
 		System.setProperty("spring.datasource.url", jdbcUrl);
-		System.setProperty("spring.datasource.username", databaseUsername);
-		System.setProperty("spring.datasource.password", databasePassword);
 
 		// アプリケーション起動
 		SpringApplication.run(MemoAppApplication.class, args);
@@ -35,9 +29,10 @@ public class MemoAppApplication {
 
 	/**
 	 * DATABASE_URL を JDBC URL に変換するメソッド
-	 * 例:
-	 * postgresql://user:password@host:port/database
-	 * -> jdbc:postgresql://host:port/database?user=user&password=password
+	 * DATABASE_URL の例:
+	 * postgresql://username:password@host:port/database
+	 * 変換後:
+	 * jdbc:postgresql://host:port/database
 	 */
 	private static String convertToJdbcUrl(String rawUrl) {
 		try {
@@ -50,19 +45,14 @@ public class MemoAppApplication {
 
 			// ユーザー情報、ホスト、データベース部分を分割
 			String[] userInfoAndHost = strippedUrl.split("@");
-			String[] userInfo = userInfoAndHost[0].split(":");
 			String[] hostAndDb = userInfoAndHost[1].split("/", 2);
-
-			// ユーザー名とパスワード
-			String username = userInfo[0];
-			String password = userInfo[1];
 
 			// ホストとデータベース名
 			String host = hostAndDb[0];
 			String database = hostAndDb[1];
 
 			// JDBC URL を生成
-			return String.format("jdbc:postgresql://%s/%s?user=%s&password=%s", host, database, username, password);
+			return String.format("jdbc:postgresql://%s/%s", host, database);
 
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed to parse DATABASE_URL. Ensure it is in the correct format.", e);
