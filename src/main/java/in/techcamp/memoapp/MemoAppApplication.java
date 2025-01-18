@@ -23,7 +23,7 @@ public class MemoAppApplication {
 			// URI オブジェクトとして解析
 			URI dbUri = new URI(databaseUrl);
 
-			// JDBC URL の作成
+			// JDBC URL の作成 (username と password を含めない)
 			String jdbcUrl = String.format("jdbc:postgresql://%s:%d%s",
 					dbUri.getHost(),
 					dbUri.getPort(),
@@ -40,7 +40,7 @@ public class MemoAppApplication {
 			System.setProperty("spring.datasource.username", username);
 			System.setProperty("spring.datasource.password", password);
 
-			// ログ出力（デバッグ用）
+			// デバッグ用ログ
 			System.out.println("JDBC URL: " + jdbcUrl);
 
 			// アプリケーション起動
